@@ -1,6 +1,7 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Dict
 from pydantic import BaseModel, Field
+from langchain_core.documents import Document
 
 class ActionType(str, Enum):
     ASK_QUESTION = "ask_question"
@@ -9,9 +10,55 @@ class ActionType(str, Enum):
 
 class QuestionType(str, Enum):
     BUDGET = "budget"
-    PREFERENCES = "preferences"
+    BRAND = "brand"
+    BODY_TYPE = "body_type"
+    TRANSMISSION = "transmission"
+    DRIVE_TYPE = "drive_type"
+    FUEL_TYPE = "fuel_type"
     USAGE = "usage"
-    PRIORITIES = "priorities"
+    PRIORITY = "priority"
+
+class FuelType(str, Enum):
+    PETROL = "бензин"
+    DIESEL = "дизель"
+    HYBRID = "гибрид"
+    ELECTRIC = "электро"
+    GAS = "газ"
+
+class TransmissionType(str, Enum):
+    AUTOMATIC = "автоматическая"
+    MANUAL = "механическая"
+    CVT = "вариатор"
+    ROBOT = "робот"
+
+class DriveType(str, Enum):
+    FRONT = "передний"
+    REAR = "задний"
+    ALL_WHEEL = "полный"
+
+class BodyType(str, Enum):
+    SEDAN = "седан"
+    HATCHBACK = "хэтчбек"
+    LIFTBACK = "лифтбек"
+    WAGON = "универсал"
+    SUV = "suv"
+    CROSSOVER = "кроссовер"
+    MINIVAN = "минивэн"
+    PICKUP = "пикап"
+    COUPE = "купе"
+    CONVERTIBLE = "кабриолет"
+    ROADSTER = "родстер"
+
+class UsageType(str, Enum):
+    NEW = "новая"
+    BUDGET = "бюджетная"
+    FAMILY = "семейная"
+    LONG_TRIP = "для дальних поездок"
+    ECONOMIC = "экономичная"
+    OFFROAD = "для бездорожья"
+    POWERFUL = "мощная"
+    WORK = "для работы"
+    WEEKEND = "для выходных"
 
 class Question(BaseModel):
     type: QuestionType
@@ -19,30 +66,26 @@ class Question(BaseModel):
     options: Optional[List[str]] = None
 
 class CarFilter(BaseModel):
-    year_from: Optional[int] = None
-    year_to: Optional[int] = None
-    price_from: Optional[float] = None
-    price_to: Optional[float] = None
-    brands: Optional[List[str]] = None
-    countries: Optional[List[str]] = None
-    drives: Optional[List[str]] = None
-    engine_types: Optional[List[str]] = None
-    fuel_consumption_from: Optional[float] = None
-    fuel_consumption_to: Optional[float] = None
-    seats_from: Optional[int] = None
-    seats_to: Optional[int] = None
-    body_types: Optional[List[str]] = None
-    doors_from: Optional[int] = None
-    doors_to: Optional[int] = None
-    transmissions: Optional[List[str]] = None
-    horsepower_from: Optional[int] = None
-    horsepower_to: Optional[int] = None
-    clearance_from: Optional[int] = None
-    clearance_to: Optional[int] = None
+    min_price: Optional[int] = None
+    max_price: Optional[int] = None
+    brands: List[str] = Field(default_factory=list)
+    body_types: List[BodyType] = Field(default_factory=list)
+    transmissions: List[TransmissionType] = Field(default_factory=list)
+    drive_types: List[DriveType] = Field(default_factory=list)
+    fuel_types: List[FuelType] = Field(default_factory=list)
+    min_year: Optional[int] = None
+    max_year: Optional[int] = None
+    min_horsepower: Optional[int] = None
+    max_horsepower: Optional[int] = None
+    min_seats: Optional[int] = None
+    max_seats: Optional[int] = None
+    min_clearance: Optional[int] = None
+    max_clearance: Optional[int] = None
 
-class ConversationResponse(BaseModel):
+class ModelResponse(BaseModel):
     action: ActionType
     message: str
     question: Optional[Question] = None
     filter: Optional[CarFilter] = None
-    confidence: float = Field(ge=0.0, le=1.0, description="Уверенность модели в том, что у нее достаточно информации для поиска") 
+    confidence: float = Field(ge=0.0, le=1.0, description="Уверенность модели в том, что у нее достаточно информации для поиска")
+    docs: List[Document] = [] 

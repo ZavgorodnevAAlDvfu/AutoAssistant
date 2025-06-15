@@ -12,13 +12,16 @@ pip install -r requirements.txt
 ```
 docker run -p 9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -e "xpack.security.http.ssl.enabled=false" docker.elastic.co/elasticsearch/elasticsearch:8.12.1
 ```
-3. Создать индекс:
-
-`curl -X PUT "http://localhost:9200/langchain_index"`
-
-А если надо перезапустить базу, то можно удалить индекс и создать снова:
-
-`curl -X DELETE 'http://localhost:9200/langchain_index' `
 
 ---
+Заполняем базу данных
 
+```
+python prepare_database.py
+```
+
+---
+Запускаем бота
+```
+python tg_bot.py
+```

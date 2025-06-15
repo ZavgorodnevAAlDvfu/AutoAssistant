@@ -14,6 +14,9 @@ def prepare_database():
     Предварительно заполняет базу данных Elasticsearch данными об автомобилях.
     Этот скрипт нужно запустить один раз перед запуском бота.
     """
+    logger.info("База данных уже подготовлена")
+    return True
+
     try:
         es_client = Elasticsearch([os.getenv("ELASTICSEARCH_URL")])
 

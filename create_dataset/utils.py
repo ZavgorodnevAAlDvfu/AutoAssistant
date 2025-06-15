@@ -52,14 +52,7 @@ def summarization_description(query_model, api):
                 """
         }]
 
-    data = {
-        "model": "gpt-4o",
-        "messages": messages,
-        'top_p': 0.2
-    }
-
-
-    answer = api.post_query(data)
+    answer = api.post_query(messages)
     answer_text = answer['choices'][0]['message']['content']
     return answer_text
 
